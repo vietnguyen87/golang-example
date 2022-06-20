@@ -8,6 +8,7 @@ A public api (BFF) serving as an aggregator and coordinator of requests.
 ```bash 
 example
 ├── database            # db migrations
+├── docs                # API docs swagger 
 ├── dto                 # Data transfer object 
 ├── cmd                 # Application commands.
 ├── pkg                 # 3rd party lib wrappers 
