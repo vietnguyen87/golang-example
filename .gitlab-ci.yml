@@ -1,0 +1,53 @@
+stages:
+  - dockerbuild
+  - gkedeploy
+  # - gkedestroy
+
+docker build:
+  stage: dockerbuild
+  tags:
+    - default
+  before_script:
+    - echo $GCP_SERVICE_ACCOUNT |base64 -d > ~/encoded_serviceaccount.json
+    - sudo docker login $GCP_ARTIFACT  -u _json_key --password-stdin   < ~/encoded_serviceaccount.json
+  script:
+    - sudo docker build -t $GCP_ARTIFACT/marathonedu-dev-v2/dev/mapi:${CI_COMMIT_SHA} .
+    - sudo docker push $GCP_ARTIFACT/marathonedu-dev-v2/dev/mapi:${CI_COMMIT_SHA}
+  after_script:
+    - sudo docker logout ${CI_REGISTRY}
+
+gcloud deploy:
+  only:
+    - master
+    - devops
+  stage: gkedeploy
+  tags:
+    - default
+  before_script:
+    - echo $GCP_SERVICE_ACCOUNT |base64 -d > ~/encoded_serviceaccount.json
+    - sudo gcloud auth activate-service-account --key-file ~/encoded_serviceaccount.json
+    - sudo gcloud container clusters get-credentials gke-dev --region asia-southeast1 --project marathonedu-dev-v2
+  script:
+    - sudo helm upgrade --install --timeout 0 -f stg.env.yaml --set image.tag=${CI_COMMIT_SHA} mapi k8s/    
+  after_script:
+    - echo "done"
+# gcloud deploy:
+#   stage: gkedeploy
+#   image: google/cloud-sdk
+#   script:
+#     - echo $SERVICE_ACCOUNT | base64 -d > ~/encoded_serviceaccount.json
+#     - gcloud auth activate-service-account --key-file ~/encoded_serviceaccount.json
+#     - gcloud config set project western-trilogy-254811
+#     - gcloud config set compute/zone us-central1-a
+#     - gcloud container clusters create cluster-for-simple-app --num-nodes=3
+#     - gcloud container clusters get-credentials cluster-for-simple-app
+#     - kubectl apply -f simple-app.yaml
+
+# gcloud destroy:
+#   stage: gkedestroy
+#   image: google/cloud-sdk
+#   when: manual
+#   script:
+#     - echo $SERVICE_ACCOUNT | base64 -d > ~/encoded_serviceaccount.json
+#     - gcloud auth activate-service-account --key-file ~/encoded_serviceaccount.json
+#     - gcloud container clusters delete cluster-for-simple-app --zone us-central1-a --project western-trilogy-254811 --quiet
