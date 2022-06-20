@@ -1,6 +1,6 @@
-# mapi 
+# example service  
 
-A public api (BFF) serving as an aggregator and coordinator of requests.
+An example service. Init new service and contribute to make it better. Thanks :D 
 
 ## Getting started
 
