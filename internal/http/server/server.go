@@ -2,6 +2,7 @@ package server
 
 import (
 	"context"
+	"example-service/docs"
 	"example-service/pkg/config"
 	"fmt"
 	"net/http"
@@ -11,6 +12,8 @@ import (
 	"example-service/internal/http/handler"
 	"example-service/internal/http/middleware"
 	"example-service/pkg/logger"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type Server interface {
@@ -56,10 +59,14 @@ func (i *serverImpl) withRouter() {
 		})
 	})
 
-	router.GET("/api/v1/tasks", i.handler.TaskHandler().GetTasks)
-	//router.POST("/api/v1/tasks", i.handler.TaskHandler().CreateTask)
-	//router.PATCH("/api/v1/tasks/:id/completed", i.handler.TaskHandler().MarkTaskAsCompleted)
-	//router.DELETE("/api/v1/tasks/:id", i.handler.TaskHandler().DeleteTask)
-
+	docs.SwaggerInfo.BasePath = "/v1"
+	v1 := router.Group("/v1")
+	{
+		tasks := v1.Group("/tasks")
+		{
+			tasks.GET("", i.handler.TaskHandler().GetTasks)
+		}
+	}
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	i.router = router
 }
