@@ -48,4 +48,9 @@ go build -o service main.go
 ```shell
 ./service serve 
 ```
-
+## Swagger 
+* https://github.com/swaggo/gin-swagger
+```shell
+swag init
+```
+* Run your app, and browse to http://localhost:8080/swagger/index.html
