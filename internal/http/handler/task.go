@@ -1,11 +1,11 @@
 package handler
 
 import (
+	"example-service/dto"
+	"example-service/internal/model/converter"
+	"example-service/internal/repository"
+	"example-service/pkg/logger"
 	"github.com/gin-gonic/gin"
-	"mapi-service/dto"
-	"mapi-service/internal/model/converter"
-	"mapi-service/internal/repository"
-	"mapi-service/pkg/logger"
 	"net/http"
 )
 

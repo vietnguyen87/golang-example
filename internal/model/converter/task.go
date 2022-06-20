@@ -1,8 +1,8 @@
 package converter
 
 import (
-	"mapi-service/dto"
-	"mapi-service/internal/model"
+	"example-service/dto"
+	"example-service/internal/model"
 )
 
 func TasksToDTO(input []*model.Task) []*dto.Task {

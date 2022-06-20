@@ -1,6 +1,6 @@
 package main
 
-import "mapi-service/cmd"
+import "example-service/cmd"
 
 func main() {
 	cmd.Execute()

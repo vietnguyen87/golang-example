@@ -2,12 +2,12 @@ package cmd
 
 import (
 	"context"
+	"example-service/internal/http/handler"
+	"example-service/internal/http/server"
+	"example-service/internal/repository"
+	"example-service/pkg/gormclient"
+	"example-service/pkg/logger"
 	"github.com/spf13/cobra"
-	"mapi-service/internal/http/handler"
-	"mapi-service/internal/http/server"
-	"mapi-service/internal/repository"
-	"mapi-service/pkg/gormclient"
-	"mapi-service/pkg/logger"
 )
 
 var serveCmd = &cobra.Command{

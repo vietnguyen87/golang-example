@@ -2,9 +2,9 @@ package cmd
 
 import (
 	"encoding/json"
+	"example-service/pkg/config"
 	"fmt"
 	"log"
-	"mapi-service/pkg/config"
 
 	"github.com/spf13/cobra"
 )

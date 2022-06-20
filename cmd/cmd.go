@@ -1,8 +1,8 @@
 package cmd
 
 import (
+	"example-service/pkg/config"
 	"log"
-	"mapi-service/pkg/config"
 	"os"
 
 	"github.com/spf13/cobra"

@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 
-	"mapi-service/pkg/logger"
+	"example-service/pkg/logger"
 )
 
 func Logger() gin.HandlerFunc {

@@ -2,8 +2,8 @@ package logger
 
 import (
 	"context"
+	"example-service/pkg/config"
 	"github.com/sirupsen/logrus"
-	"mapi-service/pkg/config"
 )
 
 const (

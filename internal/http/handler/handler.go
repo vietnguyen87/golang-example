@@ -2,8 +2,8 @@ package handler
 
 import (
 	"errors"
-	"mapi-service/dto"
-	"mapi-service/internal/repository"
+	"example-service/dto"
+	"example-service/internal/repository"
 	"strconv"
 
 	"github.com/gin-gonic/gin"

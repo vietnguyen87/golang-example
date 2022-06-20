@@ -2,15 +2,15 @@ package server
 
 import (
 	"context"
+	"example-service/pkg/config"
 	"fmt"
-	"mapi-service/pkg/config"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 
-	"mapi-service/internal/http/handler"
-	"mapi-service/internal/http/middleware"
-	"mapi-service/pkg/logger"
+	"example-service/internal/http/handler"
+	"example-service/internal/http/middleware"
+	"example-service/pkg/logger"
 )
 
 type Server interface {

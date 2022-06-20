@@ -2,9 +2,9 @@ package repository
 
 import (
 	"context"
+	"example-service/internal/model"
+	"example-service/pkg/logger"
 	"gorm.io/gorm"
-	"mapi-service/internal/model"
-	"mapi-service/pkg/logger"
 )
 
 //go:generate mockery --name=TaskRepository --case=snake

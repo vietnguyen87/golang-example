@@ -2,12 +2,12 @@ package gormclient
 
 import (
 	"context"
-	"mapi-service/pkg/config"
+	"example-service/pkg/config"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
-	"mapi-service/pkg/logger"
+	"example-service/pkg/logger"
 )
 
 func New() (*gorm.DB, error) {

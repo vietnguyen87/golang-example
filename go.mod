@@ -1,4 +1,4 @@
-module mapi-service
+module example-service
 
 go 1.18
 
