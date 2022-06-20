@@ -6,7 +6,7 @@ A public api (BFF) serving as an aggregator and coordinator of requests.
 
 ### Project structure
 ```bash 
-mapi
+example
 ├── database            # db migrations
 ├── dto                 # Data transfer object 
 ├── cmd                 # Application commands.
