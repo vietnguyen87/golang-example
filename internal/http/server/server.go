@@ -64,7 +64,8 @@ func (i *serverImpl) withRouter() {
 	{
 		tasks := v1.Group("/tasks")
 		{
-			tasks.GET("", i.handler.TaskHandler().GetTasks)
+			tasks.GET("", i.handler.TaskHandler().Get)
+			//tasks.GET("/tasks/:id", i.handler.TaskHandler().GetOne)
 		}
 	}
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))

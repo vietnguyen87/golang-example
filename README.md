@@ -16,6 +16,7 @@ example
 │   ├── loggers         # Handle logging levels: Trace, Debug, Info, Warning, Error, Fatal and Panic..
 │   ├── gormclient      # GORM MySQL Driver
 ├── internal            # Private application and library code
+│   ├── constants       # Static variables 
 │   ├── http            # HTTP transport layer
 │   ├──── handler       # API handlers & biz logic 
 │   ├──── middleware    # Middleware handler pre processing of the request. 
