@@ -2,6 +2,7 @@ package handler
 
 import (
 	"example-service/dto"
+	"example-service/internal/helper"
 	"example-service/internal/model/converter"
 	"example-service/internal/repository"
 	"example-service/pkg/logger"
@@ -10,7 +11,7 @@ import (
 )
 
 type TaskHandler interface {
-	GetTasks(c *gin.Context)
+	Get(c *gin.Context)
 }
 
 type taskHandlerImpl struct {
@@ -27,7 +28,7 @@ func NewTaskHandler(
 
 // @BasePath /v1
 
-// GetTasks godoc
+// Get godoc
 // @Summary GetTasks example
 // @Schemes
 // @Description Do GetTasks
@@ -36,11 +37,17 @@ func NewTaskHandler(
 // @Produce json
 // @Success 200 {object} map[string]interface{}
 // @Router /tasks [get]
-func (i *taskHandlerImpl) GetTasks(c *gin.Context) {
+func (i *taskHandlerImpl) Get(c *gin.Context) {
 	log := logger.CToL(c.Request.Context(), "GetTasks")
-
-	tasks, err := i.repository.TaskRepository().GetTasks(
-		logger.LToC(c.Request.Context(), log),
+	body := dto.GetReq{}
+	if err := c.ShouldBind(&body); err != nil {
+		log.WithField("err", err).Errorf("Get returns error when ShouldBindJSON: %s", err.Error())
+		abortWithError(c, http.StatusBadRequest, err)
+		return
+	}
+	query := helper.BuildQuery("", nil, nil, helper.BuildPagination(body.Page, body.Limit))
+	tasks, total, err := i.repository.TaskRepository().Find(
+		logger.LToC(c.Request.Context(), log), query,
 	)
 	if err != nil {
 		log.WithField("err", err).Errorf("GetTasks returns error: %s", err.Error())
@@ -48,7 +55,9 @@ func (i *taskHandlerImpl) GetTasks(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, &dto.GetTasksResponse{
-		Data: converter.TasksToDTO(tasks),
+	c.JSON(http.StatusOK, &dto.GetResponse{
+		Data:       converter.TasksToDTO(tasks),
+		Total:      total,
+		Pagination: dto.SetPagination(body.Page, body.Limit),
 	})
 }

@@ -22,3 +22,5 @@ vendor/
 # Configuration file
 .env
 
+#mocks
+internal/repository/mocks

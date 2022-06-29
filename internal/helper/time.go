@@ -1,4 +1,4 @@
-package converter
+package helper
 
 import (
 	"time"
@@ -6,11 +6,11 @@ import (
 	"gorm.io/gorm"
 )
 
-func timeToString(input time.Time) string {
+func TimeToString(input time.Time) string {
 	return input.Format(time.RFC3339)
 }
 
-func nullTimeToString(input gorm.DeletedAt) *string {
+func NullTimeToString(input gorm.DeletedAt) *string {
 	if !input.Valid {
 		return nil
 	}

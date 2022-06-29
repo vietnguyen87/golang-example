@@ -9,6 +9,8 @@ type Task struct {
 	DeletedAt   *string `json:"deleted_at"`
 }
 
-type GetTasksResponse struct {
-	Data []*Task `json:"data"`
+type GetResponse struct {
+	Data       []*Task     `json:"data"`
+	Total      int64       `json:"total"`
+	Pagination *Pagination `json:"pagination"`
 }
