@@ -29,11 +29,11 @@ lint-go:
 	docker run --rm -v $(PWD):/app -w /app registry.gitlab.com/gitlab-org/gitlab-build-images:golangci-lint-alpine golangci-lint --timeout=3m run ./...
 .PHONY: lint-go
 
-gen-test:
+gen-mock:
 	@cd ./internal/repository; \
 	mockery --name=TaskRepository --case=snake; \
 	mockery --name=Repository --case=snake; \
-.PHONY: gen-test
+.PHONY: gen-mock
 
 gen-api-docs:
 	swag init
