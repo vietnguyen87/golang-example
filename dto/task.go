@@ -10,7 +10,7 @@ type Task struct {
 }
 
 type GetResponse struct {
-	Data       []*Task     `json:"data"`
+	Tasks      []*Task     `json:"tasks"`
 	Total      int64       `json:"total"`
 	Pagination *Pagination `json:"pagination"`
 }

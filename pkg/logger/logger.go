@@ -3,7 +3,10 @@ package logger
 import (
 	"context"
 	"example-service/pkg/config"
+	"fmt"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/cast"
+	"gitlab.marathon.edu.vn/pkg/go/xcontext"
 )
 
 const (
@@ -18,18 +21,13 @@ var (
 
 func CToL(ctx context.Context, label string) *logrus.Entry {
 	// CToL stands for Context-To-Log
-
 	v := ctx.Value(contextKey)
-	if v == nil {
-		return initLog(label)
-	}
-
+	traceID := cast.ToString(ctx.Value(xcontext.KeyContextID.String()))
 	if log, ok := v.(*logrus.Entry); ok {
-		log = log.WithField("label", label)
-		return log
+		return log.WithField("label", label).WithField("request-id", fmt.Sprint(traceID))
 	}
 
-	return initLog(label)
+	return initLog(label).WithField("request-id", fmt.Sprint(traceID))
 }
 
 func LToC(parent context.Context, logger *logrus.Entry) context.Context {

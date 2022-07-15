@@ -4,6 +4,9 @@ import (
 	"context"
 	"example-service/docs"
 	"example-service/pkg/config"
+	"example-service/pkg/errors"
+	"example-service/pkg/ginutils"
+	"example-service/pkg/utils/apiwrapper"
 	"fmt"
 	"net/http"
 
@@ -50,21 +53,20 @@ func (i *serverImpl) withRouter() {
 
 	router := gin.New()
 	router.Use(gin.Recovery())
-
-	router.Use(middleware.Logger())
+	router.Use(middleware.RecoverPanic, ginutils.InjectTraceID, middleware.Logger())
 
 	router.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Pong!",
 		})
 	})
-
+	errors.Initialize()
 	docs.SwaggerInfo.BasePath = "/v1"
 	v1 := router.Group("/v1")
 	{
 		tasks := v1.Group("/tasks")
 		{
-			tasks.GET("", i.handler.TaskHandler().Get)
+			tasks.GET("", apiwrapper.Wrap(i.handler.TaskHandler().Get))
 			//tasks.GET("/tasks/:id", i.handler.TaskHandler().GetOne)
 		}
 	}
