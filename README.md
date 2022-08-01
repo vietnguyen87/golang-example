@@ -40,6 +40,15 @@ example
 ```shell
 cp .example.env .env  
 ```
+
+## Pull all Dependencies 
+```shell
+export GOPRIVATE="gitlab.marathon.edu.vn" 
+or 
+export GOPROXY="https://proxy.golang.org,direct"
+go mod tidy 
+```
+
 ## BUILD
 ```shell
 go build -o service main.go
