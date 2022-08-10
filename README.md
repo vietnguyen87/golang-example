@@ -36,6 +36,12 @@ example
 * Handle mySQL with gorm 
 * Goose: a database migration tool 
 
+## Change something 
+```shell
+Go to go.mod file change **example-service** to **projectname-service**
+Changing all .go files **"example-service/** to **"projectname-service/**
+```
+
 ## ENV
 ```shell
 cp .example.env .env  
