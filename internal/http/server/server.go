@@ -5,8 +5,8 @@ import (
 	"example-service/docs"
 	"example-service/pkg/config"
 	"example-service/pkg/errors"
-	"example-service/pkg/ginutils"
 	"example-service/pkg/utils/apiwrapper"
+	"example-service/pkg/utils/ginutils"
 	"fmt"
 	"net/http"
 
