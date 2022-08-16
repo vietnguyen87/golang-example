@@ -1,16 +1,16 @@
 package apiwrapper
 
-import "example-service/pkg/errors"
+import "gitlab.marathon.edu.vn/pkg/go/xerrors"
 
 func SuccessResponse() *Response {
 	return &Response{
-		Error: errors.Success.New(),
+		Error: xerrors.Success.New(),
 	}
 }
 
 func SuccessWithDataResponse(data interface{}) *Response {
 	return &Response{
-		Error: errors.Success.New(),
+		Error: xerrors.Success.New(),
 		Data:  data,
 	}
 }

@@ -4,19 +4,19 @@ import (
 	"context"
 	"example-service/docs"
 	"example-service/pkg/config"
-	"example-service/pkg/errors"
+	"example-service/pkg/tracer"
 	"example-service/pkg/utils/apiwrapper"
 	"example-service/pkg/utils/ginutils"
 	"fmt"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
-
 	"example-service/internal/http/handler"
 	"example-service/internal/http/middleware"
 	"example-service/pkg/logger"
+	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"gitlab.marathon.edu.vn/pkg/go/xerrors"
 )
 
 type Server interface {
@@ -50,17 +50,18 @@ func (i *serverImpl) withRouter() {
 	if config.GetAppConfig().Env != "local" {
 		gin.SetMode(gin.ReleaseMode)
 	}
-
 	router := gin.New()
-	router.Use(gin.Recovery())
-	router.Use(middleware.RecoverPanic, ginutils.InjectTraceID, middleware.Logger())
+	//router.Use(gin.Recovery())
+	router.Use(ginutils.InjectTraceID, middleware.Logger())
+	//Include Recovery in tracer middleware
+	router.Use(tracer.Middleware(router))
 
+	xerrors.Initialize()
 	router.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Pong!",
 		})
 	})
-	errors.Initialize()
 	docs.SwaggerInfo.BasePath = "/v1"
 	v1 := router.Group("/v1")
 	{

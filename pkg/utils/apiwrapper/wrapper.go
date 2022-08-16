@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cast"
 
-	"example-service/pkg/errors"
+	"gitlab.marathon.edu.vn/pkg/go/xerrors"
 )
 
 const (
@@ -44,9 +44,9 @@ type Response struct {
 }
 type APIResponse struct {
 	//Status  int64            `json:"status"`
-	Code    errors.ErrorType `json:"code"`
-	Message string           `json:"message"`
-	Data    interface{}      `json:"data,omitempty"`
+	Code    xerrors.ErrorType `json:"code"`
+	Message string            `json:"message"`
+	Data    interface{}       `json:"data,omitempty"`
 	//Error   interface{}      `json:"error,omitempty"`
 	TraceID string `json:"trace_id"`
 }
@@ -80,11 +80,11 @@ func AbortWithStatus(c *gin.Context, statusCode int, rsp *Response) {
 
 func transformAPIResponse(c *gin.Context, rsp *Response) *APIResponse {
 	traceID := cast.ToString(c.Request.Context().Value(xcontext.KeyContextID.String()))
-	if errors.Is(rsp.Error, errors.Success) {
+	if xerrors.Is(rsp.Error, xerrors.Success) {
 		apiRsp := &APIResponse{
 			//Status:  statusSuccess,
-			Code:    errors.GetErrorType(rsp.Error),
-			Message: errors.GetMessage(rsp.Error),
+			Code:    xerrors.GetErrorType(rsp.Error),
+			Message: xerrors.GetMessage(rsp.Error),
 			Data:    rsp.Data,
 			TraceID: traceID,
 		}
@@ -92,8 +92,8 @@ func transformAPIResponse(c *gin.Context, rsp *Response) *APIResponse {
 	}
 	apiRsp := &APIResponse{
 		//Status:  statusFail,
-		Code:    errors.GetErrorType(rsp.Error),
-		Message: errors.GetMessage(rsp.Error),
+		Code:    xerrors.GetErrorType(rsp.Error),
+		Message: xerrors.GetMessage(rsp.Error),
 		//Error:   rsp.Error,
 		Data:    rsp.Data,
 		TraceID: traceID,

@@ -34,6 +34,18 @@ func GetAppConfig() AppConfig {
 	}
 }
 
+type ElasticApmConfig struct {
+	ServiceName    string `json:"elastic_apm_service_name"`
+	ServiceVersion string `json:"elastic_apm_service_version"`
+}
+
+func GetElasticApmConfig() ElasticApmConfig {
+	return ElasticApmConfig{
+		ServiceName:    viper.GetString("elastic_apm_service_name"),
+		ServiceVersion: viper.GetString("elastic_apm_service_version"),
+	}
+}
+
 type HTTPConfig struct {
 	Port uint64 `json:"port"`
 }
