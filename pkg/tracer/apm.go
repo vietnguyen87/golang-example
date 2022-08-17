@@ -6,6 +6,7 @@ import (
 	"example-service/pkg/logger"
 	"example-service/pkg/utils/apiwrapper"
 	"github.com/gin-gonic/gin"
+	"gitlab.marathon.edu.vn/pkg/go/xcontext"
 	"gitlab.marathon.edu.vn/pkg/go/xerrors"
 	"go.elastic.co/apm/module/apmhttp/v2"
 	"go.elastic.co/apm/v2"
@@ -18,25 +19,6 @@ type middleware struct {
 	tracer         *apm.Tracer
 	requestIgnorer apmhttp.RequestIgnorerFunc
 }
-
-/*func NewTracer(engine *gin.Engine, o ...Option) Tracer {
-	fmt.Println(os.Getenv("ELASTIC_APM_SERVICE_NAME"))
-	fmt.Println(os.Getenv("ELASTIC_APM_SERVER_URL"))
-	serviceName := os.Getenv("ELASTIC_APM_SERVICE_NAME")
-	serviceVersion := os.Getenv("ELASTIC_APM_SERVICE_VERSION")
-	t, _ := apm.NewTracer(serviceName, serviceVersion)
-	newTracer := &tracer{
-		engine: engine,
-		tracer: t,
-	}
-	for _, o := range o {
-		o(newTracer)
-	}
-	if newTracer.requestIgnorer == nil {
-		newTracer.requestIgnorer = apmhttp.NewDynamicServerRequestIgnorer(newTracer.tracer)
-	}
-	return newTracer
-}*/
 
 // Option sets options for tracing.
 type Option func(*middleware)
@@ -84,6 +66,7 @@ func (t *middleware) handle(c *gin.Context) {
 	tx, body, req := StartTransactionWithBody(t.tracer, requestName, c.Request)
 	defer tx.End()
 	c.Request = req
+	setTraceID(tx, c)
 
 	defer func() {
 		log := logger.CToL(c.Request.Context(), "gin-recover")
@@ -118,6 +101,11 @@ func (t *middleware) handle(c *gin.Context) {
 	c.Next()
 }
 
+func setTraceID(tx *apm.Transaction, c *gin.Context) {
+	ctx := context.WithValue(c.Request.Context(), xcontext.KeyContextID.String(), apmhttp.FormatTraceparentHeader(tx.TraceContext()))
+	c.Request = c.Request.WithContext(ctx)
+}
+
 func setContext(ctx *apm.Context, c *gin.Context, body *apm.BodyCapturer) {
 	ctx.SetFramework("gin", gin.Version)
 	ctx.SetHTTPRequest(c.Request)
@@ -139,22 +127,6 @@ func (t *middleware) getRequestName(c *gin.Context) string {
 // If the transaction is not ignored, the request and the request body
 // capturer will be returned with the transaction added to its context.
 func StartTransactionWithBody(tracer *apm.Tracer, name string, req *http.Request) (*apm.Transaction, *apm.BodyCapturer, *http.Request) {
-	tx, req := StartTransaction(tracer, name, req)
-	bc := tracer.CaptureHTTPRequestBody(req)
-	if bc != nil {
-		req = RequestWithContext(apm.ContextWithBodyCapturer(req.Context(), bc), req)
-	}
-	return tx, bc, req
-}
-
-// StartTransaction returns a new Transaction with name,
-// created with tracer, and taking trace context from req.
-//
-// If the transaction is not ignored, the request will be
-// returned with the transaction added to its context.
-//
-// DEPRECATED. Use StartTransactionWithBody instead.
-func StartTransaction(tracer *apm.Tracer, name string, req *http.Request) (*apm.Transaction, *http.Request) {
 	traceContext, ok := getRequestTraceparent(req, apmhttp.W3CTraceparentHeader)
 	if !ok {
 		traceContext, ok = getRequestTraceparent(req, apmhttp.ElasticTraceparentHeader)
@@ -165,7 +137,11 @@ func StartTransaction(tracer *apm.Tracer, name string, req *http.Request) (*apm.
 	tx := tracer.StartTransactionOptions(name, "request", apm.TransactionOptions{TraceContext: traceContext})
 	ctx := apm.ContextWithTransaction(req.Context(), tx)
 	req = RequestWithContext(ctx, req)
-	return tx, req
+	bc := tracer.CaptureHTTPRequestBody(req)
+	if bc != nil {
+		req = RequestWithContext(apm.ContextWithBodyCapturer(req.Context(), bc), req)
+	}
+	return tx, bc, req
 }
 
 func getRequestTraceparent(req *http.Request, header string) (apm.TraceContext, bool) {

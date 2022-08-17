@@ -6,7 +6,6 @@ import (
 	"example-service/pkg/config"
 	"example-service/pkg/tracer"
 	"example-service/pkg/utils/apiwrapper"
-	"example-service/pkg/utils/ginutils"
 	"fmt"
 	"net/http"
 
@@ -52,9 +51,8 @@ func (i *serverImpl) withRouter() {
 	}
 	router := gin.New()
 	//router.Use(gin.Recovery())
-	router.Use(ginutils.InjectTraceID, middleware.Logger())
 	//Include Recovery in tracer middleware
-	router.Use(tracer.Middleware(router))
+	router.Use(middleware.Logger(), tracer.Middleware(router))
 
 	xerrors.Initialize()
 	router.GET("/ping", func(c *gin.Context) {

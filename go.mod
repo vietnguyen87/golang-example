@@ -4,9 +4,9 @@ go 1.19
 
 require (
 	github.com/gin-gonic/gin v1.8.1
+	github.com/google/uuid v1.1.2
 	github.com/onsi/ginkgo/v2 v2.1.4
 	github.com/onsi/gomega v1.19.0
-	github.com/pkg/errors v0.9.1
 	github.com/rs/xid v1.4.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/cast v1.5.0
@@ -17,9 +17,6 @@ require (
 	github.com/swaggo/gin-swagger v1.5.0
 	github.com/swaggo/swag v1.8.3
 	gitlab.marathon.edu.vn/pkg/go v1.0.31
-	go.elastic.co/apm v1.15.0
-	go.elastic.co/apm/module/apmgin v1.15.0
-	go.elastic.co/apm/module/apmhttp v1.15.0
 	go.elastic.co/apm/module/apmhttp/v2 v2.1.0
 	go.elastic.co/apm/v2 v2.1.0
 	gorm.io/driver/mysql v1.3.4
@@ -61,6 +58,7 @@ require (
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.2 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/procfs v0.7.3 // indirect
 	github.com/santhosh-tekuri/jsonschema v1.2.4 // indirect
@@ -72,7 +70,6 @@ require (
 	github.com/ugorji/go/codec v1.2.7 // indirect
 	go.elastic.co/fastjson v1.1.0 // indirect
 	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e // indirect
-	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616 // indirect
 	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4 // indirect
 	golang.org/x/net v0.0.0-20220617184016-355a448f1bc9 // indirect
 	golang.org/x/sys v0.0.0-20220615213510-4f61da869c0c // indirect
