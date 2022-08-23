@@ -14,6 +14,8 @@ import (
 	"runtime/debug"
 )
 
+const RequestIDHeader = "X-Request-ID"
+
 type middleware struct {
 	engine         *gin.Engine
 	tracer         *apm.Tracer
@@ -102,8 +104,13 @@ func (t *middleware) handle(c *gin.Context) {
 }
 
 func setTraceID(tx *apm.Transaction, c *gin.Context) {
+	traceId := c.GetHeader(RequestIDHeader)
+	if traceId == "" {
+		traceId = apmhttp.FormatTraceparentHeader(tx.TraceContext())
+	}
 	ctx := context.WithValue(c.Request.Context(), xcontext.KeyContextID.String(), apmhttp.FormatTraceparentHeader(tx.TraceContext()))
 	c.Request = c.Request.WithContext(ctx)
+	c.Set(xcontext.KeyContextID.String(), apmhttp.FormatTraceparentHeader(tx.TraceContext()))
 }
 
 func setContext(ctx *apm.Context, c *gin.Context, body *apm.BodyCapturer) {
@@ -162,4 +169,11 @@ func RequestWithContext(ctx context.Context, req *http.Request) *http.Request {
 	reqCopy.URL = url
 	req.URL = url
 	return reqCopy
+}
+
+func GetTraceIDFromCtx(c *gin.Context) string {
+	if result, ok := c.Get(xcontext.KeyContextID.String()); ok {
+		return result.(string)
+	}
+	return ""
 }
