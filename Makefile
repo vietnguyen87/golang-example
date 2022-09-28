@@ -25,8 +25,8 @@ goose.status:
 	goose mysql "$$dsn" status
 
 lint-go:
-# golangci-lint run ./backend/..
-	docker run --rm -v $(PWD):/app -w /app registry.gitlab.com/gitlab-org/gitlab-build-images:golangci-lint-alpine golangci-lint --timeout=3m run ./...
+# golangci-lint run ./...
+	docker run --rm -v $(PWD):/app -w /app golangci/golangci-lint:v1.49.0 golangci-lint --timeout=3m run ./...
 .PHONY: lint-go
 
 gen-mock:

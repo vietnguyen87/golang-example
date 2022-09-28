@@ -108,9 +108,10 @@ func setTraceID(tx *apm.Transaction, c *gin.Context) {
 	if traceId == "" {
 		traceId = apmhttp.FormatTraceparentHeader(tx.TraceContext())
 	}
-	ctx := context.WithValue(c.Request.Context(), xcontext.KeyContextID.String(), apmhttp.FormatTraceparentHeader(tx.TraceContext()))
+	//nolint
+	ctx := context.WithValue(c.Request.Context(), xcontext.KeyContextID.String(), traceId)
 	c.Request = c.Request.WithContext(ctx)
-	c.Set(xcontext.KeyContextID.String(), apmhttp.FormatTraceparentHeader(tx.TraceContext()))
+	c.Set(xcontext.KeyContextID.String(), traceId)
 }
 
 func setContext(ctx *apm.Context, c *gin.Context, body *apm.BodyCapturer) {

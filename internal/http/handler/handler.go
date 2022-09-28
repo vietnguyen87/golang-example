@@ -1,12 +1,7 @@
 package handler
 
 import (
-	"errors"
-	"example-service/dto"
 	"example-service/internal/repository"
-	"strconv"
-
-	"github.com/gin-gonic/gin"
 	//"gitlab.marathon.edu.vn/marathon/services/mapiinternal/repository"
 )
 
@@ -31,11 +26,11 @@ func (i *handlerImpl) TaskHandler() TaskHandler {
 	return i.taskHandler
 }
 
-func abortWithError(c *gin.Context, code int, args ...error) {
+/*func abortWithError(c *gin.Context, code int, args ...error) {
 	err := errors.New(strconv.Itoa(code))
 	if len(args) == 1 {
 		err = args[0]
 	}
 
 	c.JSON(code, &dto.ErrorResponse{Error: err.Error()})
-}
+}*/

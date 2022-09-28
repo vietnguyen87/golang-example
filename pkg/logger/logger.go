@@ -9,8 +9,10 @@ import (
 	"gitlab.marathon.edu.vn/pkg/go/xcontext"
 )
 
+type contextKey string
+
 const (
-	contextKey = "logger"
+	contextLoggerKey contextKey = "logger"
 )
 
 var (
@@ -21,7 +23,7 @@ var (
 
 func CToL(ctx context.Context, label string) *logrus.Entry {
 	// CToL stands for Context-To-Log
-	v := ctx.Value(contextKey)
+	v := ctx.Value(contextLoggerKey)
 	traceID := cast.ToString(ctx.Value(xcontext.KeyContextID.String()))
 	if log, ok := v.(*logrus.Entry); ok {
 		return log.WithField("label", label).WithField("request-id", fmt.Sprint(traceID))
@@ -32,7 +34,7 @@ func CToL(ctx context.Context, label string) *logrus.Entry {
 
 func LToC(parent context.Context, logger *logrus.Entry) context.Context {
 	// LToC stands for Log-To-Context
-	return context.WithValue(parent, contextKey, logger)
+	return context.WithValue(parent, contextLoggerKey, logger)
 }
 
 func initLog(label string) *logrus.Entry {
