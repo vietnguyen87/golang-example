@@ -54,7 +54,7 @@ func (i *serverImpl) withRouter() {
 	//Include Recovery in tracer middleware
 	router.Use(middleware.Logger(), tracer.Middleware(router))
 
-	xerrors.Initialize()
+	_ = xerrors.Initialize()
 	router.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{
 			"message": "Pong!",

@@ -1,7 +1,7 @@
 package helper
 
 import (
-	"academic-service/internal/model"
+	"example-service/internal/model"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"

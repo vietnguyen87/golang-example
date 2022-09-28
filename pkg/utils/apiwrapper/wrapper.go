@@ -11,11 +11,6 @@ import (
 	"gitlab.marathon.edu.vn/pkg/go/xerrors"
 )
 
-const (
-	statusSuccess = 1
-	statusFail    = 0
-)
-
 /**
 Example success response:
 {
