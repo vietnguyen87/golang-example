@@ -109,10 +109,23 @@ func GetDatabaseConfig() DatabaseConfig {
 	}
 }
 
+type PrometheusConfig struct {
+	Enable     string `json:"prom_enable"`
+	MetricPort string `json:"prom_metric_port"`
+}
+
+func GetPrometheusConfig() PrometheusConfig {
+	return PrometheusConfig{
+		Enable:     viper.GetString("prom_enable"),
+		MetricPort: viper.GetString("prom_metric_port"),
+	}
+}
+
 func AsMap() map[string]interface{} {
 	return map[string]interface{}{
-		"app":     GetAppConfig(),
-		"http":    GetHTTPConfig(),
-		"logging": GetLoggingConfig(),
+		"app":        GetAppConfig(),
+		"http":       GetHTTPConfig(),
+		"logging":    GetLoggingConfig(),
+		"prometheus": GetPrometheusConfig(),
 	}
 }

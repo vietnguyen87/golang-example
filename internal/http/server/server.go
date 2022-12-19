@@ -7,6 +7,7 @@ import (
 	"example-service/pkg/tracer"
 	"example-service/pkg/utils/apiwrapper"
 	"fmt"
+	"gitlab.marathon.edu.vn/pkg/go/xprom"
 	"net/http"
 
 	"example-service/internal/http/handler"
@@ -22,9 +23,10 @@ type Server interface {
 	Start() error
 }
 
-func New(handler handler.Handler) Server {
+func New(handler handler.Handler, measurer xprom.Measurer) Server {
 	server := &serverImpl{
-		handler: handler,
+		handler:  handler,
+		measurer: measurer,
 	}
 
 	server.withRouter()
@@ -33,7 +35,8 @@ func New(handler handler.Handler) Server {
 }
 
 type serverImpl struct {
-	handler handler.Handler
+	handler  handler.Handler
+	measurer xprom.Measurer
 
 	router *gin.Engine
 }
@@ -50,9 +53,11 @@ func (i *serverImpl) withRouter() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 	router := gin.New()
-	//router.Use(gin.Recovery())
-	//Include Recovery in tracer middleware
-	router.Use(middleware.Logger(), tracer.Middleware(router))
+	router.Use(middleware.Logger())
+	//Prometheus Include Recovery
+	i.measurer.GinMiddleware(router)
+	//Tracer middleware
+	router.Use(tracer.Middleware(router))
 
 	_ = xerrors.Initialize()
 	router.GET("/ping", func(c *gin.Context) {
