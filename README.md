@@ -49,10 +49,8 @@ cp .example.env .env
 
 ## Pull all Dependencies 
 ```shell
-export GOPRIVATE="gitlab.marathon.edu.vn" 
-or 
-export GOPROXY="https://proxy.golang.org,direct"
 go mod tidy 
+go mod vendor 
 ```
 
 ## BUILD
