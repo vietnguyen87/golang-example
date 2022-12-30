@@ -1,7 +1,7 @@
 package ginutils
 
 import (
-	"gitlab.marathon.edu.vn/pkg/go/xcontext"
+	"github.com/vietnguyen87/pkg-golang/xcontext"
 
 	"github.com/gin-gonic/gin"
 )

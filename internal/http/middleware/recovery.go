@@ -4,7 +4,7 @@ import (
 	"example-service/pkg/logger"
 	"example-service/pkg/utils/apiwrapper"
 	"github.com/gin-gonic/gin"
-	"gitlab.marathon.edu.vn/pkg/go/xerrors"
+	"github.com/vietnguyen87/pkg-golang/xerrors"
 	"runtime/debug"
 )
 

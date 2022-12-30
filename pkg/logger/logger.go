@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
-	"gitlab.marathon.edu.vn/pkg/go/xcontext"
+	"github.com/vietnguyen87/pkg-golang/xcontext"
 )
 
 type contextKey string

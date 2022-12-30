@@ -3,12 +3,12 @@ package apiwrapper
 import (
 	"net/http"
 
-	"gitlab.marathon.edu.vn/pkg/go/xcontext"
+	"github.com/vietnguyen87/pkg-golang/xcontext"
 
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cast"
 
-	"gitlab.marathon.edu.vn/pkg/go/xerrors"
+	"github.com/vietnguyen87/pkg-golang/xerrors"
 )
 
 /**

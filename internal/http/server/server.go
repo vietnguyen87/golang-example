@@ -7,7 +7,7 @@ import (
 	"example-service/pkg/tracer"
 	"example-service/pkg/utils/apiwrapper"
 	"fmt"
-	"gitlab.marathon.edu.vn/pkg/go/xprom"
+	"github.com/vietnguyen87/pkg-golang/xprom"
 	"net/http"
 
 	"example-service/internal/http/handler"
@@ -16,7 +16,7 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
-	"gitlab.marathon.edu.vn/pkg/go/xerrors"
+	"github.com/vietnguyen87/pkg-golang/xerrors"
 )
 
 type Server interface {

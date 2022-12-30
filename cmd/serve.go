@@ -10,7 +10,7 @@ import (
 	"example-service/pkg/logger"
 	"fmt"
 	"github.com/spf13/cobra"
-	"gitlab.marathon.edu.vn/pkg/go/xprom"
+	"github.com/vietnguyen87/pkg-golang/xprom"
 )
 
 var serveCmd = &cobra.Command{

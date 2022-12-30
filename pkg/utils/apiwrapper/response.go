@@ -1,6 +1,6 @@
 package apiwrapper
 
-import "gitlab.marathon.edu.vn/pkg/go/xerrors"
+import "github.com/vietnguyen87/pkg-golang/xerrors"
 
 func SuccessResponse() *Response {
 	return &Response{

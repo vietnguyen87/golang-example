@@ -2,7 +2,7 @@ package handler
 
 import (
 	"example-service/internal/repository"
-	//"gitlab.marathon.edu.vn/marathon/services/mapiinternal/repository"
+	//"github.com/vietnguyen87/marathon/services/mapiinternal/repository"
 )
 
 //go:generate mockery --name=Handler --case=snake
