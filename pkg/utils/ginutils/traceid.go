@@ -1,14 +1,8 @@
 package ginutils
 
-import (
-	"gitlab.marathon.edu.vn/pkg/go/xcontext"
-
-	"github.com/gin-gonic/gin"
-)
-
 const (
-	headerRequestID = "X-Request-ID"
-	formatDate      = "0601021504" // YYMMDDHHMM
+//headerRequestID = "X-Request-ID"
+//formatDate = "0601021504" // YYMMDDHHMM
 )
 
 /*func InjectTraceID(c *gin.Context) {
@@ -25,9 +19,9 @@ const (
 	c.Next()
 }*/
 
-func GetTraceIDFromCtx(c *gin.Context) string {
-	if result, ok := c.Get(xcontext.KeyContextID.String()); ok {
-		return result.(string)
-	}
-	return ""
-}
+//func GetTraceIDFromCtx(c *gin.Context) string {
+//	if result, ok := c.Get(xcontext.KeyContextID.String()); ok {
+//		return result.(string)
+//	}
+//	return ""
+//}
