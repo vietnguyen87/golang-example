@@ -2,14 +2,15 @@ package model
 
 import (
 	"gorm.io/gorm"
+	"strings"
 	"time"
 )
 
 type Model struct {
-	ID uint64 `json:"id" gorm:"primaryKey"`
+	ID uint64 `json:"id" gorm:"primaryKey" select:"id"`
 
-	CreatedAt time.Time       `json:"createdAt"`
-	UpdatedAt time.Time       `json:"updatedAt"`
+	CreatedAt time.Time       `json:"createdAt" select:"created_at"`
+	UpdatedAt time.Time       `json:"updatedAt"  select:"updated_at"`
 	DeletedAt *gorm.DeletedAt `json:"deletedAt,omitempty" gorm:"index"`
 }
 
@@ -40,8 +41,12 @@ type Pagination struct {
 	Page, Limit, Offset int
 }
 
-func (q *Query) SetQ(keyword string) {
+func (q *Query) SetQ(keyword, searchFields string) {
+	if keyword == "" {
+		return
+	}
 	q.Q = keyword
+	q.SearchFields = strings.Split(searchFields, ",")
 }
 
 func (q *Query) SetFilters(filters []*Filter) {
@@ -56,12 +61,15 @@ func (q *Query) SetPagination(pagination *Pagination) {
 	q.Pagination = pagination
 }
 
-func (q *Query) SetHaveCount(haveCount bool) {
-	q.HaveCount = haveCount
+func (q *Query) SetSelectFields(selectFields string) {
+	q.Select = strings.Split(selectFields, ",")
+	if len(selectFields) == 0 {
+		q.Select = []string{"*"}
+	}
 }
 
-func (q *Query) SetSearchFields(searchFields []string) {
-	q.SearchFields = searchFields
+func (q *Query) SetHaveCount(haveCount bool) {
+	q.HaveCount = haveCount
 }
 
 type CountGroupBy[T any] struct {

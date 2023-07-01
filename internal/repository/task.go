@@ -33,8 +33,9 @@ func (i *taskRepositoryImpl) Find(ctx context.Context, query *model.Query) (task
 	fields, values := helper.BuildFilters(query.Filters)
 	//Filters
 	tx := i.task(ctx).Where(strings.Join(fields, " AND "), values...)
+	searchFields, searchValues := helper.BuildFilters(helper.BuildSearchFilter(query.Q, query.SearchFields))
+
 	//Preloads
-	searchFields, searchValues := helper.BuildFilters(helper.BuildSearchFilter(query.Q, query.SearchFields...))
 	if len(query.Preloads) > 0 {
 		for _, item := range query.Preloads {
 			tx = tx.Preload(item)

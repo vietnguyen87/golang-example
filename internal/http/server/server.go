@@ -3,18 +3,19 @@ package server
 import (
 	"context"
 	"example-service/docs"
-	"example-service/internal/http/handler"
-	"example-service/internal/http/middleware"
 	"example-service/pkg/config"
-	"example-service/pkg/logger"
 	"example-service/pkg/tracer"
 	"fmt"
+	"github.com/vietnguyen87/pkg-golang/xprom"
+	"net/http"
+
+	"example-service/internal/http/handler"
+	"example-service/internal/http/middleware"
+	"example-service/pkg/logger"
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/vietnguyen87/pkg-golang/xerrors"
-	"github.com/vietnguyen87/pkg-golang/xprom"
-	"net/http"
 )
 
 type Server interface {

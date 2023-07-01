@@ -4,14 +4,13 @@ import (
 	"example-service/dto"
 	"example-service/internal/constants"
 	"example-service/internal/model"
-	"fmt"
 )
 
 //BuildQuery for handler want to get data
-func BuildQuery(q string, filters []*model.Filter, sort *model.Sort, pagination *model.Pagination) *model.Query {
+func BuildQuery(q, searchFields string, filters []*model.Filter, sort *model.Sort, pagination *model.Pagination) *model.Query {
 	query := &model.Query{}
 	//Search by keyword
-	query.SetQ(q)
+	query.SetQ(q, searchFields)
 	//Build Filters
 	query.SetFilters(filters)
 	//Build sort
@@ -20,18 +19,6 @@ func BuildQuery(q string, filters []*model.Filter, sort *model.Sort, pagination 
 	}
 	query.SetPagination(pagination)
 	return query
-}
-
-//Using for repo query data
-func buildSearchFilter(q string) *dto.Filter {
-	if q == "" {
-		return nil
-	}
-	return &dto.Filter{
-		Key:    "name",
-		Value:  fmt.Sprint("%" + q + "%"),
-		Method: "LIKE",
-	}
 }
 
 func BuildFilters(filtersReq []*dto.Filter) (filters []*model.Filter) {
