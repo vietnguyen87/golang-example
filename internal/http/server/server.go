@@ -3,20 +3,18 @@ package server
 import (
 	"context"
 	"example-service/docs"
-	"example-service/pkg/config"
-	"example-service/pkg/tracer"
-	"example-service/pkg/utils/apiwrapper"
-	"fmt"
-	"github.com/vietnguyen87/pkg-golang/xprom"
-	"net/http"
-
 	"example-service/internal/http/handler"
 	"example-service/internal/http/middleware"
+	"example-service/pkg/config"
 	"example-service/pkg/logger"
+	"example-service/pkg/tracer"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/vietnguyen87/pkg-golang/xerrors"
+	"github.com/vietnguyen87/pkg-golang/xprom"
+	"net/http"
 )
 
 type Server interface {
@@ -70,7 +68,7 @@ func (i *serverImpl) withRouter() {
 	{
 		tasks := v1.Group("/tasks")
 		{
-			tasks.GET("", apiwrapper.Wrap(i.handler.TaskHandler().Get))
+			tasks.GET("", i.handler.TaskHandler().Get)
 			//tasks.GET("/tasks/:id", i.handler.TaskHandler().GetOne)
 		}
 	}

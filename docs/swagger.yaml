@@ -1,3 +1,12 @@
+definitions:
+  dto.ErrorResp:
+    properties:
+      error: {}
+      message:
+        type: string
+    type: object
+  dto.Results:
+    type: object
 info:
   contact: {}
 paths:
@@ -12,8 +21,15 @@ paths:
         "200":
           description: OK
           schema:
-            additionalProperties: true
-            type: object
+            $ref: '#/definitions/dto.Results'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResp'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResp'
       summary: GetTasks example
       tags:
       - example
