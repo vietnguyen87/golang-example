@@ -25,21 +25,53 @@ type taskRepositoryImpl struct {
 	db *gorm.DB
 }
 
-func (i *taskRepositoryImpl) Find(ctx context.Context, query *model.Query) (tasks []*model.Task, total int64, err error) {
-	tx := i.db.WithContext(ctx).Model(&model.Task{})
-	fields, values := helper.BuildFilters(query.Q, query.Filters)
+func (i *taskRepositoryImpl) task(ctx context.Context) *gorm.DB {
+	return i.db.WithContext(ctx).Debug().Model(&model.Task{})
+}
 
-	tx = tx.Where(strings.Join(fields, " AND "), values...)
+func (i *taskRepositoryImpl) Find(ctx context.Context, query *model.Query) (tasks []*model.Task, total int64, err error) {
+	fields, values := helper.BuildFilters(query.Filters)
+	//Filters
+	tx := i.task(ctx).Where(strings.Join(fields, " AND "), values...)
+	//Preloads
+	searchFields, searchValues := helper.BuildFilters(helper.BuildSearchFilter(query.Q, query.SearchFields...))
+	if len(query.Preloads) > 0 {
+		for _, item := range query.Preloads {
+			tx = tx.Preload(item)
+		}
+	}
+	//Joins
+	if len(query.Joins) > 0 {
+		joinsQuery, joinsWhere, selectData := helper.BuildJoins("tasks", query.Joins)
+		tx = tx.Joins(joinsQuery)
+		//Select fields, both of on joins and main fields you want.
+		if len(selectData) > 0 {
+			query.Select = append(query.Select, selectData...)
+		}
+		tx = tx.Where(joinsWhere, searchValues...)
+	}
+	tx = tx.Where(strings.Join(searchFields, " OR "), searchValues...)
+	//Sorting
 	if query.Sort != nil {
 		tx.Order(fmt.Sprintf("%s %s", query.Sort.Key, query.Sort.SortBy))
 	}
-
-	if err := tx.Count(&total).Error; err != nil {
-		return nil, 0, err
+	//Count total
+	if query.HaveCount {
+		if err := tx.Count(&total).Error; err != nil {
+			return nil, 0, err
+		}
 	}
+	//Pagination
 	if query.Pagination == nil {
-		query.Pagination = helper.BuildPagination(constants.PAGINATION_PAGE, constants.PAGINATION_LIMIT)
+		query.Pagination = helper.BuildPagination(constants.PaginationPage, constants.PaginationLimit)
+	} else {
+		query.Pagination = helper.BuildPagination(query.Pagination.Page, query.Pagination.Limit)
 	}
-	err = tx.Offset(query.Pagination.Offset).Limit(query.Pagination.Limit).Find(&tasks).Error
+	err = tx.
+		Select(strings.Join(query.Select, ",")).
+		Offset(query.Pagination.Offset).
+		Limit(query.Pagination.Limit).
+		Find(&tasks).Error
+
 	return tasks, total, err
 }

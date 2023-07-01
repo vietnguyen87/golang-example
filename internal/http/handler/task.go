@@ -2,18 +2,18 @@ package handler
 
 import (
 	"example-service/dto"
-	"example-service/internal/helper"
-	"example-service/internal/model/converter"
+	"example-service/internal/constants"
+	"example-service/internal/http/handler/builder"
+	"example-service/internal/model"
 	"example-service/internal/repository"
 	"example-service/pkg/logger"
-	"example-service/pkg/utils/apiwrapper"
 	"github.com/gin-gonic/gin"
-	"gitlab.marathon.edu.vn/pkg/go/xerrors"
 	"go.elastic.co/apm/v2"
+	"net/http"
 )
 
 type TaskHandler interface {
-	Get(c *gin.Context) *apiwrapper.Response
+	Get(c *gin.Context)
 }
 
 type taskHandlerImpl struct {
@@ -28,41 +28,48 @@ func NewTaskHandler(
 	}
 }
 
-// @BasePath /v1
+// @BasePath  /v1
 
 // Get godoc
-// @Summary GetTasks example
+// @Summary  GetTasks example
 // @Schemes
-// @Description Do GetTasks
-// @Tags example
-// @Accept json
-// @Produce json
-// @Success 200 {object} map[string]interface{}
-// @Router /tasks [get]
-func (i *taskHandlerImpl) Get(c *gin.Context) *apiwrapper.Response {
+// @Description  Do GetTasks
+// @Tags         example
+// @Accept       json
+// @Produce      json
+// @Failure      400  {object}  dto.ErrorResp
+// @Failure      500  {object}  dto.ErrorResp
+// @Success      200  {object}  dto.Results
+// @Router       /tasks [get]
+func (i *taskHandlerImpl) Get(c *gin.Context) {
 	ctx := c.Request.Context()
 	log := logger.CToL(ctx, "GetTasks")
 	span, ctx := apm.StartSpan(c.Request.Context(), "GetTasks", "request")
 	defer span.End()
 
-	// create new ao.Span and context.Context for this part of the request
-	//return &apiwrapper.Response{Error: errors.BadRequestErr.Report(errors.New("test lỗi"))}
-	body := dto.GetReq{}
-	if err := c.ShouldBind(&body); err != nil {
+	req := dto.ListReq{}
+	if err := c.ShouldBind(&req); err != nil {
 		log.WithField("err", err).Errorf("Get returns error when ShouldBindJSON: %s", err.Error())
-		return &apiwrapper.Response{Error: xerrors.BadRequestErr.Report(err)}
+		c.JSON(http.StatusBadRequest, builder.BuildErrorResponse(err, err.Error()))
+		return
 	}
-	query := helper.BuildQuery("", nil, nil, helper.BuildPagination(body.Page, body.Limit))
-	tasks, total, err := i.repository.TaskRepository().Find(
-		logger.LToC(ctx, log), query,
-	)
+
+	query := builder.BuildQuery(req.Q, builder.BuildFilters(req.Filters), builder.BuildSort(req.Sort), builder.BuildPagination(req.Pagination))
+	query.SetHaveCount(true)
+	query.SetSearchFields([]string{"exams.id", "exams.title", "exams.title_normalize"})
+
+	tasks, total, err := i.repository.TaskRepository().Find(ctx, query)
 	if err != nil {
-		log.WithField("err", err).Errorf("GetTasks returns error: %s", err.Error())
-		return &apiwrapper.Response{Error: xerrors.BadRequestErr.Report(err)}
+		log.WithField("err", err).Errorf("TaskRepository().Find err: %s", err.Error())
+		c.JSON(http.StatusInternalServerError, builder.BuildErrorResponse(err, constants.InternalError))
+		return
 	}
-	return apiwrapper.SuccessWithDataResponse(&dto.GetResponse{
-		Tasks:      converter.TasksToDTO(tasks),
-		Total:      total,
-		Pagination: dto.SetPagination(body.Page, body.Limit),
+	c.JSON(http.StatusOK, dto.ListResp[[]*model.Task]{
+		Total: total,
+		Data:  tasks,
+		Pagination: &dto.Pagination{
+			Limit: int32(query.Pagination.Limit),
+			Page:  int32(query.Pagination.Page),
+		},
 	})
 }

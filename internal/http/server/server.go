@@ -5,7 +5,6 @@ import (
 	"example-service/docs"
 	"example-service/pkg/config"
 	"example-service/pkg/tracer"
-	"example-service/pkg/utils/apiwrapper"
 	"fmt"
 	"gitlab.marathon.edu.vn/pkg/go/xprom"
 	"net/http"
@@ -70,7 +69,7 @@ func (i *serverImpl) withRouter() {
 	{
 		tasks := v1.Group("/tasks")
 		{
-			tasks.GET("", apiwrapper.Wrap(i.handler.TaskHandler().Get))
+			tasks.GET("", i.handler.TaskHandler().Get)
 			//tasks.GET("/tasks/:id", i.handler.TaskHandler().GetOne)
 		}
 	}

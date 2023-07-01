@@ -69,4 +69,27 @@ go build -o service main.go
 ```shell
 swag init
 ```
+
+## Features 
+```shell 
+General function for get all
+type Query struct {
+	Q            string           //search string
+	Select       []string         //select fields
+	SearchFields []string         //search fields
+	Filters      []*Filter        //filters
+	Preloads     []string         //preloads 
+	Joins        []*Join          //joins 
+	Pagination   *Pagination      //pagination 
+	Sort         *Sort            //sort 
+	HaveCount    bool             //having count total results.
+}
+Building query for BFF, API Gateway get data in only one function instead of many functions like: 
+- GetList
+- GetListWithPagination
+- GetListWithPaginationAndSort
+- GetListWithPaginationAndSortAndFilter
+- ...   
+```
+
 * Run your app, and browse to http://localhost:8080/swagger/index.html

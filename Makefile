@@ -3,6 +3,7 @@ PWD = $(shell pwd)
 install:
 	go install github.com/pressly/goose/v3/cmd/goose@latest
 	go install github.com/vektra/mockery/v2@latest
+	go install github.com/swaggo/swag/cmd/swag@latest
 
 goose.create:
 	@read -p "Migration filename: " filename; \
@@ -36,5 +37,5 @@ gen-mock:
 .PHONY: gen-mock
 
 gen-api-docs:
-	swag init
+	swag init --parseDependency --parseInternal true
 .PHONY: gen-api-docs
