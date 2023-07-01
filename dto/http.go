@@ -10,15 +10,21 @@ type ErrorResp struct {
 type ListReq struct {
 	Q string `json:"q" form:"q" query:"q"`
 	// Sort field - support single field
-	Sort *Sort `json:"sort,omitempty"`
+	Sort *Sort `json:"sort,omitempty" form:"sort" query:"sort"`
 	// Filter - support multiple field with AND condition
-	Filters []*Filter `json:"filters,omitempty"`
+	Filters []*Filter `json:"filters,omitempty" form:"filters" query:"filters"`
 	//Preloads - support multiple preload
-	Preloads []string `json:"preloads,omitempty"`
+	Preloads []string `json:"preloads,omitempty" form:"preloads" query:"preloads"`
 	//Joins - support multiple join
-	Joins []*model.Join `json:"joins,omitempty"`
+	Joins []*model.Join `json:"joins,omitempty" form:"joins" query:"joins"`
 	//query string
-	Pagination *Pagination `json:"pagination,omitempty"`
+	Pagination *Pagination `json:"pagination,omitempty"  form:"pagination" query:"pagination"`
+	//have count
+	HaveCount bool `json:"haveCount,omitempty"  form:"haveCount" query:"haveCount"`
+	//Select fields
+	SelectFields string `json:"selectFields,omitempty"  form:"selectFields" query:"selectFields"`
+	//SearchFields - support multiple search field
+	SearchFields string `json:"searchFields,omitempty" form:"searchFields" query:"searchFields"`
 }
 
 type Filter struct {
@@ -61,15 +67,13 @@ func (p *ListReq) SetSort(key string, isAsc bool) {
 }
 
 type ListResp[T any] struct {
-	Data       T           `json:"data"`
-	Total      int64       `json:"total"`
-	Pagination *Pagination `json:"pagination,omitempty"`
-	Metadata   *Metadata   `json:"metadata,omitempty"`
+	Data     T         `json:"data"`
+	Metadata *Metadata `json:"metadata,omitempty"`
 }
 
 type Metadata struct {
-	Pagination Pagination `json:"pagination"`
-	Total      int64      `json:"total"`
+	Pagination *Pagination `json:"pagination"`
+	Total      int64       `json:"total"`
 }
 
 func (p *ListReq) GetFilters() []*Filter {

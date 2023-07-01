@@ -5,7 +5,48 @@ definitions:
       message:
         type: string
     type: object
+  dto.Filter:
+    properties:
+      key:
+        type: string
+      method:
+        type: string
+      value: {}
+    type: object
+  dto.Pagination:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+    type: object
   dto.Results:
+    type: object
+  dto.Sort:
+    properties:
+      is_asc:
+        type: boolean
+      key:
+        type: string
+    type: object
+  model.Join:
+    properties:
+      condition:
+        type: string
+      key:
+        type: string
+      originalKey:
+        type: string
+      originalTable:
+        type: string
+      select:
+        items:
+          type: string
+        type: array
+      table:
+        type: string
+      type:
+        type: string
     type: object
 info:
   contact: {}
@@ -15,6 +56,28 @@ paths:
       consumes:
       - application/json
       description: Do GetTasks
+      parameters:
+      - description: have count
+        in: query
+        name: haveCount
+        type: boolean
+      - description: Preloads - support multiple preload
+        in: query
+        items:
+          type: string
+        name: preloads
+        type: array
+      - in: query
+        name: q
+        type: string
+      - description: SearchFields - support multiple search field
+        in: query
+        name: searchFields
+        type: string
+      - description: Select fields
+        in: query
+        name: selectFields
+        type: string
       produces:
       - application/json
       responses:

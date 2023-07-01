@@ -36,16 +36,19 @@ func TestBuildFilters(t *testing.T) {
 
 func TestBuildSearchFilter(t *testing.T) {
 	t.Run("Test with keyword empty", func(t *testing.T) {
-		actual := BuildSearchFilter("")
+		actual := BuildSearchFilter("", []string{"name"})
 		require.Nil(t, actual)
 	})
 	t.Run("Test with keyword has value", func(t *testing.T) {
-		expected := &model.Filter{
-			Key:    "name",
-			Value:  "%viet đẹp trai%",
-			Method: "LIKE",
+		expected := []*model.Filter{
+			{
+				Key:    "lower(name)",
+				Value:  "%viet đẹp trai%",
+				Method: "LIKE",
+			},
 		}
-		actual := BuildSearchFilter("viet đẹp trai")
+		actual := BuildSearchFilter("viet đẹp trai", []string{"name"})
+		expected[0].Value = "%viet dep trai%"
 		assert.Equal(t, expected, actual)
 	})
 }

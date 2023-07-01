@@ -3,7 +3,6 @@ package builder
 import (
 	"example-service/dto"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
 )
@@ -23,21 +22,5 @@ func TestBuildFilters(t *testing.T) {
 		}
 		values := BuildFilters(filters)
 		assert.Equal(t, filters, values)
-	})
-}
-
-func TestBuildSearchFilter(t *testing.T) {
-	t.Run("Test with keyword empty", func(t *testing.T) {
-		actual := buildSearchFilter("")
-		require.Nil(t, actual)
-	})
-	t.Run("Test with keyword has value", func(t *testing.T) {
-		expected := &dto.Filter{
-			Key:    "name",
-			Value:  "%viet đẹp trai%",
-			Method: "LIKE",
-		}
-		actual := buildSearchFilter("viet đẹp trai")
-		assert.Equal(t, expected, actual)
 	})
 }

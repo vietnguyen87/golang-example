@@ -4,11 +4,7 @@ import (
 	"example-service/internal/constants"
 	"example-service/internal/model"
 	"fmt"
-	"golang.org/x/text/runes"
-	"golang.org/x/text/transform"
-	"golang.org/x/text/unicode/norm"
 	"strings"
-	"unicode"
 )
 
 // BuildPagination for handler pagination
@@ -36,21 +32,6 @@ func BuildPagination(page, limit int) *model.Pagination {
 	}
 }
 
-// BuildQuery for handler want to get data
-func BuildQuery(q string, filters []*model.Filter, sort *model.Sort, pagination *model.Pagination) *model.Query {
-	query := &model.Query{}
-	//Search by keyword
-	query.SetQ(q)
-	//Build Filters
-	query.SetFilters(filters)
-	//Build sort
-	if sort != nil && sort.Key != "" {
-		query.SetSort(sort)
-	}
-	query.SetPagination(pagination)
-	return query
-}
-
 func BuildFilters(filters []*model.Filter) (fields []string, values []interface{}) {
 	for _, filter := range filters {
 		if filter.Value == nil {
@@ -63,11 +44,11 @@ func BuildFilters(filters []*model.Filter) (fields []string, values []interface{
 	return fields, values
 }
 
-func BuildSearchFilter(q string, searchFields ...string) (filters []*model.Filter) {
+func BuildSearchFilter(q string, searchFields []string) (filters []*model.Filter) {
 	if q == "" {
 		return nil
 	}
-	q = normalize(q)
+	q = RemoveAccents(q)
 	for _, searchField := range searchFields {
 		filters = append(filters, &model.Filter{
 			Key:    fmt.Sprintf("lower(%v)", searchField),
@@ -96,12 +77,4 @@ func BuildJoins(tableName string, joins []*model.Join) (joinsQuery, whereOnJoin 
 	}
 
 	return strings.ToLower(strings.Join(sliceQuery, "\n")), strings.ToLower(strings.Join(sliceWhere, " AND ")), selectData
-}
-
-func normalize(str string) string {
-	trans := transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFC)
-	result, _, _ := transform.String(trans, str)
-	result = strings.ReplaceAll(result, "đ", "d")
-	result = strings.ReplaceAll(result, "Đ", "D")
-	return result
 }

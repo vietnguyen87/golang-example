@@ -4,7 +4,6 @@ import (
 	"example-service/dto"
 	"example-service/internal/constants"
 	"example-service/internal/http/handler/builder"
-	"example-service/internal/model"
 	"example-service/internal/repository"
 	"example-service/pkg/logger"
 	"github.com/gin-gonic/gin"
@@ -37,6 +36,7 @@ func NewTaskHandler(
 // @Tags         example
 // @Accept       json
 // @Produce      json
+// @Param request query dto.ListReq true "body"
 // @Failure      400  {object}  dto.ErrorResp
 // @Failure      500  {object}  dto.ErrorResp
 // @Success      200  {object}  dto.Results
@@ -54,9 +54,9 @@ func (i *taskHandlerImpl) Get(c *gin.Context) {
 		return
 	}
 
-	query := builder.BuildQuery(req.Q, builder.BuildFilters(req.Filters), builder.BuildSort(req.Sort), builder.BuildPagination(req.Pagination))
-	query.SetHaveCount(true)
-	query.SetSearchFields([]string{"exams.id", "exams.title", "exams.title_normalize"})
+	query := builder.BuildQuery(req.Q, req.SearchFields, builder.BuildFilters(req.Filters), builder.BuildSort(req.Sort), builder.BuildPagination(req.Pagination))
+	query.SetSelectFields(req.SelectFields)
+	query.SetHaveCount(req.HaveCount)
 
 	tasks, total, err := i.repository.TaskRepository().Find(ctx, query)
 	if err != nil {
@@ -64,12 +64,5 @@ func (i *taskHandlerImpl) Get(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, builder.BuildErrorResponse(err, constants.InternalError))
 		return
 	}
-	c.JSON(http.StatusOK, dto.ListResp[[]*model.Task]{
-		Total: total,
-		Data:  tasks,
-		Pagination: &dto.Pagination{
-			Limit: int32(query.Pagination.Limit),
-			Page:  int32(query.Pagination.Page),
-		},
-	})
+	c.JSON(http.StatusOK, builder.BuildTasksResponse(tasks, total, req.Pagination))
 }

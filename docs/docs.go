@@ -29,6 +29,40 @@ const docTemplate = `{
                     "example"
                 ],
                 "summary": "GetTasks example",
+                "parameters": [
+                    {
+                        "type": "boolean",
+                        "description": "have count",
+                        "name": "haveCount",
+                        "in": "query"
+                    },
+                    {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        },
+                        "description": "Preloads - support multiple preload",
+                        "name": "preloads",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "SearchFields - support multiple search field",
+                        "name": "searchFields",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Select fields",
+                        "name": "selectFields",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -62,8 +96,71 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.Filter": {
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "string"
+                },
+                "method": {
+                    "type": "string"
+                },
+                "value": {}
+            }
+        },
+        "dto.Pagination": {
+            "type": "object",
+            "properties": {
+                "limit": {
+                    "type": "integer"
+                },
+                "page": {
+                    "type": "integer"
+                }
+            }
+        },
         "dto.Results": {
             "type": "object"
+        },
+        "dto.Sort": {
+            "type": "object",
+            "properties": {
+                "is_asc": {
+                    "type": "boolean"
+                },
+                "key": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Join": {
+            "type": "object",
+            "properties": {
+                "condition": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "originalKey": {
+                    "type": "string"
+                },
+                "originalTable": {
+                    "type": "string"
+                },
+                "select": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "table": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
         }
     }
 }`

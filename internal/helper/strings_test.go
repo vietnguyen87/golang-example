@@ -33,3 +33,30 @@ func TestIndexOfSliceString(t *testing.T) {
 		})
 	}
 }
+
+func TestRemoveAccents(t *testing.T) {
+	tests := []struct {
+		name   string
+		input  string
+		output string
+	}{
+		{
+			name:   "test case 1",
+			input:  "Nguyễn Thanh Việt",
+			output: "Nguyen Thanh Viet",
+		},
+		{
+			name:   "test case 1",
+			input:  "Đỗ Đào Duy",
+			output: "Do Dao Duy",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := RemoveAccents(tt.input); got != tt.output {
+				t.Errorf("Normalize() = %v, want %v", got, tt.output)
+			}
+		})
+	}
+}
