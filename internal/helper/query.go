@@ -4,28 +4,28 @@ import (
 	"example-service/internal/constants"
 	"example-service/internal/model"
 	"fmt"
+	"golang.org/x/text/runes"
+	"golang.org/x/text/transform"
+	"golang.org/x/text/unicode/norm"
+	"strings"
+	"unicode"
 )
 
-//BuildSort for handler sorting
-func BuildSort(key string, isASC bool) (sort *model.Sort) {
-	sortBy := constants.SORT_BY_DESC
-	if isASC {
-		sortBy = constants.SORT_BY_ASC
-	}
-	return &model.Sort{
-		Key:    key,
-		SortBy: sortBy,
-	}
-}
-
-//BuildPagination for handler pagination
+// BuildPagination for handler pagination
 func BuildPagination(page, limit int) *model.Pagination {
-	if limit <= 0 || limit > constants.PAGINATION_LIMIT {
-		limit = constants.PAGINATION_LIMIT
+	if limit == -1 {
+		return &model.Pagination{
+			Page:   1,
+			Limit:  -1,
+			Offset: 0,
+		}
+	}
+	if limit <= 0 || limit > constants.PaginationLimit {
+		limit = constants.PaginationLimit
 	}
 
 	if page <= 0 {
-		page = constants.PAGINATION_PAGE
+		page = constants.PaginationPage
 	}
 	offset := (page - 1) * limit
 
@@ -36,7 +36,7 @@ func BuildPagination(page, limit int) *model.Pagination {
 	}
 }
 
-//BuildQuery for handler want to get data
+// BuildQuery for handler want to get data
 func BuildQuery(q string, filters []*model.Filter, sort *model.Sort, pagination *model.Pagination) *model.Query {
 	query := &model.Query{}
 	//Search by keyword
@@ -51,27 +51,57 @@ func BuildQuery(q string, filters []*model.Filter, sort *model.Sort, pagination 
 	return query
 }
 
-//Using for repo query data
-//BuildFilters build filters from list fields and value
-func BuildFilters(q string, filters []*model.Filter) (fields []string, values []interface{}) {
-	if q != "" {
-		filter := buildSearchFilter(q)
-		filters = append(filters, filter)
-	}
+func BuildFilters(filters []*model.Filter) (fields []string, values []interface{}) {
 	for _, filter := range filters {
+		if filter.Value == nil {
+			fields = append(fields, fmt.Sprintf("%s %s NULL", filter.Key, filter.Method))
+			continue
+		}
 		fields = append(fields, fmt.Sprintf("%s %s ?", filter.Key, filter.Method))
 		values = append(values, filter.Value)
 	}
 	return fields, values
 }
 
-func buildSearchFilter(q string) *model.Filter {
+func BuildSearchFilter(q string, searchFields ...string) (filters []*model.Filter) {
 	if q == "" {
 		return nil
 	}
-	return &model.Filter{
-		Key:    "name",
-		Value:  fmt.Sprint("%" + q + "%"),
-		Method: "LIKE",
+	q = normalize(q)
+	for _, searchField := range searchFields {
+		filters = append(filters, &model.Filter{
+			Key:    fmt.Sprintf("lower(%v)", searchField),
+			Value:  strings.ToLower(fmt.Sprint("%" + q + "%")),
+			Method: "LIKE",
+		})
 	}
+	return filters
+}
+
+func BuildJoins(tableName string, joins []*model.Join) (joinsQuery, whereOnJoin string, selectData []string) {
+	selectData = []string{fmt.Sprintf("%s.*", tableName)}
+	if len(joins) == 0 || tableName == "" {
+		return
+	}
+	var sliceQuery []string
+	var sliceWhere []string
+	for _, join := range joins {
+		if len(join.Select) > 0 {
+			selectData = append(selectData, join.Select...)
+		}
+		if join.Condition != "" {
+			sliceWhere = append(sliceWhere, join.Condition)
+		}
+		sliceQuery = append(sliceQuery, fmt.Sprintf("%s %s on %s.%s = %s.%s", join.Type, join.Table, join.Table, join.Key, join.OriginalTable, join.OriginalKey))
+	}
+
+	return strings.ToLower(strings.Join(sliceQuery, "\n")), strings.ToLower(strings.Join(sliceWhere, " AND ")), selectData
+}
+
+func normalize(str string) string {
+	trans := transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFC)
+	result, _, _ := transform.String(trans, str)
+	result = strings.ReplaceAll(result, "đ", "d")
+	result = strings.ReplaceAll(result, "Đ", "D")
+	return result
 }

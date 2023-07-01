@@ -1,5 +1,9 @@
 package dto
 
+import "example-service/internal/model"
+
+type Results ListResp[[]*model.Task]
+
 type Task struct {
 	ID          uint64  `json:"id"`
 	Summary     string  `json:"summary"`
