@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment                # Type of Kubernetes resource
+metadata:
+  name: example-deployment                 # Name of the Kubernetes resource
+spec:
+  replicas: 3                   # Number of pods to run at any given time
+  selector:
+    matchLabels:
+      app: example-service               # This deployment applies to any Pods matching the specified label
+  template:                      # This deployment will create a set of pods using the configurations in this template
+    metadata:
+      labels:                    # The labels that will be applied to all the pods in this deployment
+        app: example-service
+        type: internal-service
+    spec:                        # Spec for the container which will run in the Pod
+      containers:
+        - name: example-api
+          image: vietnt/example-api:latest       # The image we are getting from dockerhub
+          imagePullPolicy: Never                # Never pull the image from dockerhub
+          ports:
+            - name: http
+              containerPort: 8080                   # Should match the port number that the Go application listens on
+          env:
+            - name: ENV                             # Name of the environmental variable file to load
+              value: local
+            - name: HTTP_PORT
+              value: "8080"
+            - name: DATABASE
+              value: "root:root@tcp(mysql:3306)/example?charset=utf8mb4&parseTime=True&loc=Local"
+          livenessProbe:           # To check the health of the Pod
+            httpGet:
+              path: /ping
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 15
+            timeoutSeconds: 5
+#          readinessProbe:          # To check if the Pod is ready to serve traffic or not
+#            httpGet:
+#              path: /readiness
+#              port: 8080
+#              scheme: HTTP
+#            initialDelaySeconds: 5
+#            timeoutSeconds: 1

@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: example-api-ingress
+spec:
+  ingressClassName: kong
+  rules:
+    - http:
+        paths:
+        - path: /v1/*
+          pathType: ImplementationSpecific
+          backend:
+            service:
+              name: example-api
+              port:
+                number: 8080
