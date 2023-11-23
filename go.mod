@@ -15,7 +15,6 @@ require (
 	github.com/swaggo/gin-swagger v1.6.0
 	github.com/swaggo/swag v1.8.12
 	github.com/vietnguyen87/pkg-golang v1.0.56
-	gitlab.marathon.edu.vn/pkg/go v1.0.56
 	go.elastic.co/apm/module/apmhttp/v2 v2.1.0
 	go.elastic.co/apm/v2 v2.1.0
 	golang.org/x/text v0.8.0
