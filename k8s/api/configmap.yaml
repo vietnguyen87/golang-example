@@ -1,0 +1,10 @@
+apiVersion: v1
+data:
+  DATABASE: "root:rootTest@tcp(mysql:3306)/example?charset=utf8mb4&parseTime=True&loc=Local"
+  ENV: "local"
+  HTTP_PORT: "8080"
+  HTTP_ACADEMIC_ADDR: "http://academic-service.default.svc"
+kind: ConfigMap
+metadata:
+  creationTimestamp: null
+  name: example-configmap

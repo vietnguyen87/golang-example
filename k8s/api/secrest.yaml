@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: example-secrets
+type: Opaque
+data:
+  DATABASE: cm9vdDpyb290QHRjcChteXNxbDozMzA2KS9leGFtcGxlP2NoYXJzZXQ9dXRmOG1iNCZwYXJzZVRpbWU9VHJ1ZSZsb2M9TG9jYWw=

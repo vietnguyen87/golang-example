@@ -11,6 +11,6 @@ spec:
           pathType: ImplementationSpecific
           backend:
             service:
-              name: example-api
+              name: example-service
               port:
                 number: 8080
